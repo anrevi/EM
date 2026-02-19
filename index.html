@@ -43,7 +43,7 @@ const firebaseConfig = {
   const db   = getFirestore(app);
 
   // ── Expose to window so non-module scripts can use them ──
-  window._firebase = { auth, db, GoogleAuthProvider, signInWithPopup, signOut,
+  window._firebase = { auth, db, ALLOWED_EMAIL, GoogleAuthProvider, signInWithPopup, signOut,
     onAuthStateChanged, doc, collection, onSnapshot, addDoc, setDoc,
     deleteDoc, getDocs, serverTimestamp, query, orderBy };
 

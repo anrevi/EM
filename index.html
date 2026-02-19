@@ -37,7 +37,7 @@ const firebaseConfig = {
   appId: "1:305122900130:web:9cdf98ada9315414963ffb"
 };
   // ↑↑↑ REPLACE THESE VALUES ↑↑↑
-
+  const ALLOWED_EMAIL = "vivekdn2504@gmail.com";
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);

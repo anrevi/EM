@@ -347,6 +347,21 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
 .empty-ico{font-size:48px;margin-bottom:12px}
 .empty-title{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:6px}
 .empty-sub{font-size:13px;line-height:1.5}
+
+/* WIDGET REORDER */
+.widget-row{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;transition:background .2s}
+.widget-row:active{background:var(--bg3)}
+.widget-drag-icon{font-size:18px;color:var(--text3);flex-shrink:0}
+.widget-label{flex:1;font-size:14px;font-weight:500}
+.widget-arrows{display:flex;flex-direction:column;gap:2px}
+.w-arr{width:28px;height:24px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:background .15s}
+.w-arr:active{background:var(--bg4)}
+
+/* COLOR SWATCH PICKER */
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.color-swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:transform .15s}
+.color-swatch.sel{border-color:white;transform:scale(1.2)}
+.color-swatch:active{transform:scale(.9)}
 </style>
 </head>
 <body>
@@ -405,78 +420,14 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
         <div class="topbar-sub" id="dash-date"></div>
       </div>
       <div class="topbar-right">
-        <div class="icon-btn" onclick="openBudgetModal()">⚙️</div>
+        <div class="icon-btn" onclick="openBudgetModal()" title="Budgets">⚙️</div>
+        <div class="icon-btn" onclick="openWidgetModal()" title="Reorder dashboard">⊞</div>
         <div id="avatar-wrap" onclick="doSignOut()"></div>
       </div>
     </div>
 
-    <div class="hero-card">
-      <div class="hero-label">Monthly Balance</div>
-      <div class="hero-amount"><span class="sym">₹</span><span id="hero-balance">0</span></div>
-      <div class="hero-month" id="hero-month"></div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hsl">Income</div><div class="hsv inc" id="hero-inc">₹0</div></div>
-        <div class="hero-stat"><div class="hsl">Spent</div><div class="hsv exp" id="hero-exp">₹0</div></div>
-        <div class="hero-stat"><div class="hsl">Today</div><div class="hsv" id="hero-today" style="color:var(--gold)">₹0</div></div>
-      </div>
-    </div>
-
-    <div class="sur-row">
-      <div class="sur-card"><div class="sur-num ok" id="sur-days">–</div><div class="sur-lbl">Days Left</div></div>
-      <div class="sur-card"><div class="sur-num warn" id="sur-burn">–</div><div class="sur-lbl">Daily Burn</div></div>
-      <div class="sur-card"><div class="sur-num" id="sur-score" style="color:var(--green)">–</div><div class="sur-lbl">Health Score</div></div>
-    </div>
-
-    <div class="predict">
-      <div class="predict-ico">🤖</div>
-      <div class="predict-txt" id="predict-txt">Crunching your numbers...</div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Monthly Budget</div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:13px;color:var(--text2)">Total Spent</span>
-          <span style="font-size:13px;font-family:'DM Mono',monospace;font-weight:600" id="bud-pct">0%</span>
-        </div>
-        <div class="meter-track"><div class="meter-fill mf-low" id="bud-fill" style="width:0%"></div></div>
-        <div style="display:flex;justify-content:space-between;margin-top:6px">
-          <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="bud-spent">₹0 spent</span>
-          <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="bud-left">₹0 left</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="section"><div class="section-title">This Month by Category</div></div>
-    <div class="cat-scroll" id="cat-scroll"></div>
-    <div style="height:14px"></div>
-
-    <div class="section">
-      <div class="section-title">Expense Heatmap — Last 5 Weeks</div>
-      <div class="card">
-        <div class="hm-days">
-          <div class="hm-day">S</div><div class="hm-day">M</div><div class="hm-day">T</div>
-          <div class="hm-day">W</div><div class="hm-day">T</div><div class="hm-day">F</div><div class="hm-day">S</div>
-        </div>
-        <div class="hm-grid" id="hm-grid"></div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;justify-content:flex-end">
-          <span style="font-size:10px;color:var(--text3)">Less</span>
-          <div style="width:10px;height:10px;border-radius:2px;background:var(--bg3)"></div>
-          <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.25)"></div>
-          <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.55)"></div>
-          <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.9)"></div>
-          <span style="font-size:10px;color:var(--text3)">More</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="section-title" style="margin-bottom:0">Recent</div>
-        <span style="font-size:12px;color:var(--gold);cursor:pointer" onclick="switchScreen('transactions')">See all →</span>
-      </div>
-    </div>
-    <div style="padding:0 16px" id="recent-list"></div>
+    <!-- Widgets rendered in order by renderDashboard() -->
+    <div id="dash-widgets"></div>
   </div>
 
   <!-- TRANSACTIONS -->
@@ -552,6 +503,8 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
       <div class="settings-group">
         <div class="si" onclick="openBudgetModal()"><div class="si-ico">🎯</div><div class="si-text"><div class="si-lbl">Set Budgets</div><div class="si-sub">Monthly limits per category</div></div><div class="si-arr">›</div></div>
         <div class="si" onclick="openModal('goals-modal')"><div class="si-ico">🏆</div><div class="si-text"><div class="si-lbl">Savings Goals</div><div class="si-sub">Track financial targets</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="openCatModal()"><div class="si-ico">🏷️</div><div class="si-text"><div class="si-lbl">Custom Categories</div><div class="si-sub">Add your own spending categories</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="openWidgetModal()"><div class="si-ico">⊞</div><div class="si-text"><div class="si-lbl">Dashboard Layout</div><div class="si-sub">Reorder home screen widgets</div></div><div class="si-arr">›</div></div>
       </div>
       <div class="section-title">Export</div>
       <div class="settings-group">
@@ -677,8 +630,68 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
       <div class="form-field"><label class="form-label">Name</label><input type="text" class="form-input" id="rec-inp-name" placeholder="e.g. Netflix, Rent, SIP"></div>
       <div class="form-field"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="rec-inp-amount" placeholder="649"></div>
       <div class="form-field"><label class="form-label">Due Day of Month (1–31)</label><input type="number" class="form-input" id="rec-inp-day" placeholder="15" min="1" max="31"></div>
+      <div class="form-field">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="rec-inp-cat">
+          <option value="bills">💡 Bills</option>
+          <option value="emi">🏦 EMI</option>
+          <option value="rent">🏠 Rent</option>
+          <option value="entertainment">🎬 Entertainment</option>
+          <option value="health">🏥 Health</option>
+          <option value="education">📚 Education</option>
+          <option value="others">📦 Others</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Payment Method</label>
+        <select class="form-input" id="rec-inp-method">
+          <option value="Bank">Bank</option>
+          <option value="UPI">UPI</option>
+          <option value="Card">Card</option>
+          <option value="Wallet">Wallet</option>
+          <option value="Cash">Cash</option>
+        </select>
+      </div>
       <div class="form-field"><label class="form-label">Icon (emoji)</label><input type="text" class="form-input" id="rec-inp-icon" placeholder="🎬" maxlength="4"></div>
+      <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--text2);line-height:1.6">
+        🔄 A transaction will be <strong style="color:var(--gold)">automatically added</strong> on the due date every month.
+      </div>
       <button class="save-btn" onclick="saveRecurring()">Add Recurring Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM CATEGORIES MODAL -->
+<div class="modal-overlay" id="cat-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title">Custom Categories</div><div class="modal-close" onclick="closeModal('cat-modal')">✕</div></div>
+    <div class="modal-body">
+      <div id="custom-cat-list" style="margin-bottom:20px"></div>
+      <div style="background:var(--bg3);border-radius:14px;padding:16px;margin-bottom:4px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Add New Category</div>
+        <div class="form-field"><label class="form-label">Name</label><input type="text" class="form-input" id="cat-inp-name" placeholder="e.g. Gym, Pet, Gaming"></div>
+        <div class="form-field"><label class="form-label">Icon (emoji)</label><input type="text" class="form-input" id="cat-inp-icon" placeholder="💪" maxlength="4"></div>
+        <div class="form-field">
+          <label class="form-label">Colour</label>
+          <div class="color-swatches" id="cat-swatches"></div>
+          <input type="hidden" id="cat-inp-color">
+        </div>
+        <button class="save-btn" onclick="saveCustomCat()" style="margin-top:4px">Add Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIDGET REORDER MODAL -->
+<div class="modal-overlay" id="widget-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title">Dashboard Layout</div><div class="modal-close" onclick="closeModal('widget-modal')">✕</div></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6">Use the arrows to reorder sections on your home screen.</div>
+      <div id="widget-order-list"></div>
+      <button class="save-btn" onclick="applyWidgetOrder()" style="margin-top:8px">Save Layout</button>
     </div>
   </div>
 </div>
@@ -714,13 +727,13 @@ const CATS=[
   {id:'salary',name:'Salary',icon:'💼',color:'#2ecc71'},
   {id:'others',name:'Others',icon:'📦',color:'#607d8b'},
 ];
-const getCat=id=>CATS.find(c=>c.id===id)||CATS[11];
+const getCat=id=>CATS.find(c=>c.id===id)||customCats.find(c=>c.id===id)||CATS[11];
 
 // ── State ──
-let txns=[],budgets={total:30000,cats:{}},goals=[],recurring=[];
+let txns=[],budgets={total:30000,cats:{}},goals=[],recurring=[],customCats=[];
 let editId=null,txnType='expense',amtStr='',selCat='food',selMethod='UPI',selGoalIco='🎯';
 let curFilter='all',charts={},activeScreen='dashboard';
-let unsubTxns,unsubBudgets,unsubGoals,unsubRecurring;
+let unsubTxns,unsubBudgets,unsubGoals,unsubRecurring,unsubCustomCats;
 
 // ── Helpers ──
 const fmt=n=>Number(n).toLocaleString('en-IN');
@@ -731,6 +744,18 @@ const isToday=iso=>iso.slice(0,10)===todayStr();
 const monthExp=()=>txns.filter(t=>t.type==='expense'&&isThisMonth(t.date));
 const monthInc=()=>txns.filter(t=>t.type==='income'&&isThisMonth(t.date));
 const sum=a=>a.reduce((s,t)=>s+t.amount,0);
+const allCats=()=>[...CATS,...customCats];  // built-in + user custom
+
+// ── Dashboard widget order (persisted in localStorage) ──
+const WIDGET_DEFAULTS=['hero','survival','predict','budget','categories','heatmap','recent'];
+let widgetOrder=[...WIDGET_DEFAULTS];
+function loadWidgetOrder(){
+  try{const s=localStorage.getItem('paisa_widget_order');if(s)widgetOrder=JSON.parse(s);}catch(e){}
+  // ensure all defaults are present (in case new widgets were added)
+  WIDGET_DEFAULTS.forEach(w=>{if(!widgetOrder.includes(w))widgetOrder.push(w);});
+}
+function saveWidgetOrder(){localStorage.setItem('paisa_widget_order',JSON.stringify(widgetOrder));}
+loadWidgetOrder();
 
 function toast(msg,d=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),d)}
 function syncBadge(s){
@@ -798,7 +823,7 @@ function tryAgain(){
 
 function doSignOut(){
   confirm2('🚪','Sign Out?','You will be logged out of this device.','Sign Out','#e74c3c',()=>{
-    if(unsubTxns)unsubTxns();if(unsubBudgets)unsubBudgets();if(unsubGoals)unsubGoals();if(unsubRecurring)unsubRecurring();
+    if(unsubTxns)unsubTxns();if(unsubBudgets)unsubBudgets();if(unsubGoals)unsubGoals();if(unsubRecurring)unsubRecurring();if(unsubCustomCats)unsubCustomCats();
     window._fb.signOut(window._fb.auth);
     closeModal('confirm-modal');
   });
@@ -848,8 +873,64 @@ function subscribeAll(){
 
   unsubRecurring=onSnapshot(collection(db,'recurring'),snap=>{
     recurring=snap.docs.map(d=>({id:d.id,...d.data()}));
+    autoAddRecurring();
     if(activeScreen==='budget')renderBudget();
   });
+
+  unsubCustomCats=onSnapshot(collection(db,'customCats'),snap=>{
+    customCats=snap.docs.map(d=>({id:d.id,...d.data()}));
+    // Refresh category grid if add-modal is open
+    if(document.getElementById('add-modal').classList.contains('open'))refreshCatGrid();
+    if(activeScreen==='budget')renderBudget();
+  });
+}
+
+// ══════════════════════════════════════════
+// AUTO-ADD RECURRING TRANSACTIONS
+// ══════════════════════════════════════════
+// Runs every time recurring collection loads.
+// For each item whose dueDay == today's date,
+// if not already added this month (tracked via lastAdded: "YYYY-MM"),
+// create a transaction and stamp lastAdded to prevent duplicates.
+async function autoAddRecurring(){
+  const{db,collection,addDoc,doc,setDoc,serverTimestamp}=window._fb;
+  const now=new Date();
+  const todayDay=now.getDate();
+  const thisMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const todayISO=todayStr();
+
+  for(const r of recurring){
+    // Skip if already auto-added this month
+    if(r.lastAdded===thisMonth) continue;
+    // Process if today IS the due day, OR if due day already passed this month (catch-up)
+    const isDueToday = r.dueDay===todayDay;
+    const isMissed   = r.dueDay<todayDay;  // past-due this month, not yet added
+    if(!isDueToday&&!isMissed) continue;
+
+    // For catch-up, use the actual due date (backdated), not today
+    const txnDate = isMissed
+      ? now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(r.dueDay).padStart(2,'0')
+      : todayISO;
+
+    try{
+      await addDoc(collection(db,'transactions'),{
+        type:'expense',
+        amount:r.amount,
+        category:r.category||'bills',
+        note:r.name+(isMissed?' (Auto-catchup)':' (Auto)'),
+        method:r.method||'Bank',
+        date:new Date(txnDate+'T12:00:00').toISOString(),
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp(),
+        autoAdded:true,
+        recurringId:r.id
+      });
+      await setDoc(doc(db,'recurring',r.id),{lastAdded:thisMonth},{merge:true});
+      toast(isMissed?'🔄 Catchup: '+r.name:'🔄 Auto-added: '+r.name);
+    }catch(err){
+      console.error('Auto-add failed for',r.name,err.message);
+    }
+  }
 }
 
 // ══════════════════════════════════════════
@@ -875,7 +956,28 @@ function switchScreen(id){
 // ══════════════════════════════════════════
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&!o.classList.contains('confirm'))o.classList.remove('open')}));
+// Modals with forms that need dirty-check before closing
+const DIRTY_MODALS=['add-modal','budget-modal','goals-modal','rec-modal'];
+function hasFormData(id){
+  const el=document.getElementById(id);
+  if(!el)return false;
+  const inputs=el.querySelectorAll('input[type=text],input[type=number],input[type=date]');
+  for(const i of inputs){if(i.value.trim()&&i.id!=='add-date')return true;}
+  if(id==='add-modal'&&amtStr&&amtStr!=='')return true;
+  return false;
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{
+  if(e.target!==o)return;
+  if(o.classList.contains('confirm'))return;
+  const id=o.id;
+  if(DIRTY_MODALS.includes(id)&&hasFormData(id)){
+    confirm2('⚠️','Discard changes?','You have unsaved data. Close anyway?','Discard','#e74c3c',()=>{
+      closeModal(id);closeModal('confirm-modal');
+    });
+  }else{
+    o.classList.remove('open');
+  }
+}));
 
 function confirm2(ico,title,sub,label,color,fn){
   document.getElementById('ci-ico').textContent=ico;
@@ -904,15 +1006,19 @@ function refreshTypeUI(){
   document.getElementById('type-exp').className='type-btn'+(txnType==='expense'?' active expense':'');
   document.getElementById('type-inc').className='type-btn'+(txnType==='income'?' active income':'');
 }
+function haptic(ms=10){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 function kp(k){
-  if(k==='del')amtStr=amtStr.slice(0,-1);
-  else if(k==='.')amtStr.includes('.')||(amtStr+='.');
-  else{if(amtStr.length>=8)return;amtStr+=k;}
+  if(k==='del'){amtStr=amtStr.slice(0,-1);haptic(20);}
+  else if(k==='.'){amtStr.includes('.')||(amtStr+='.');haptic(10);}
+  else{if(amtStr.length>=8)return;amtStr+=k;haptic(10);}
   refreshAmt();
 }
 function refreshAmt(){document.getElementById('amt-disp').textContent=amtStr||'0';}
 function refreshCatGrid(){
-  const cats=txnType==='income'?CATS.filter(c=>['salary','others'].includes(c.id)):CATS.filter(c=>c.id!=='salary');
+  const all=allCats();
+  const cats=txnType==='income'
+    ?all.filter(c=>['salary','others'].includes(c.id)||c.type==='income')
+    :all.filter(c=>c.id!=='salary'&&c.type!=='income');
   if(!cats.find(c=>c.id===selCat))selCat=cats[0].id;
   document.getElementById('cat-grid').innerHTML=cats.map(c=>`
     <div class="cat-item${selCat===c.id?' sel':''}" onclick="selC('${c.id}')">
@@ -1002,6 +1108,106 @@ async function saveGoal(){
   }catch(err){syncBadge('error');toast('❌ '+err.message);}
 }
 
+// ══════════════════════════════════════════
+// CUSTOM CATEGORIES
+// ══════════════════════════════════════════
+const CAT_COLORS=['#e74c3c','#3498db','#9b59b6','#f39c12','#2ecc71','#1abc9c','#e91e63','#00bcd4','#ff9800','#607d8b','#e67e22','#8e44ad'];
+let catColorIdx=0;
+
+function openCatModal(){
+  renderCatList();
+  document.getElementById('cat-inp-name').value='';
+  document.getElementById('cat-inp-icon').value='';
+  // Render colour swatches
+  const selColor=CAT_COLORS[catColorIdx%CAT_COLORS.length];
+  document.getElementById('cat-inp-color').value=selColor;
+  document.getElementById('cat-swatches').innerHTML=CAT_COLORS.map(c=>
+    `<div class="color-swatch${c===selColor?' sel':''}" style="background:${c}" onclick="pickCatColor('${c}',this)"></div>`
+  ).join('');
+  openModal('cat-modal');
+}
+
+function pickCatColor(color,el){
+  document.getElementById('cat-inp-color').value=color;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ── Widget reorder modal ──
+let tempWidgetOrder=[];
+function openWidgetModal(){
+  tempWidgetOrder=[...widgetOrder];
+  renderWidgetOrderList();
+  openModal('widget-modal');
+}
+function renderWidgetOrderList(){
+  document.getElementById('widget-order-list').innerHTML=tempWidgetOrder.map((id,i)=>{
+    const m=WIDGET_META[id]||{label:id,icon:'▪️'};
+    return`<div class="widget-row">
+      <span class="widget-drag-icon">⠿</span>
+      <span class="widget-label">${m.icon} ${m.label}</span>
+      <div class="widget-arrows">
+        ${i>0?`<div class="w-arr" onclick="moveWidget(${i},-1)">▲</div>`:'<div style="height:24px"></div>'}
+        ${i<tempWidgetOrder.length-1?`<div class="w-arr" onclick="moveWidget(${i},1)">▼</div>`:'<div style="height:24px"></div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+function moveWidget(idx,dir){
+  haptic(10);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=tempWidgetOrder.length)return;
+  [tempWidgetOrder[idx],tempWidgetOrder[newIdx]]=[tempWidgetOrder[newIdx],tempWidgetOrder[idx]];
+  renderWidgetOrderList();
+}
+function applyWidgetOrder(){
+  widgetOrder=tempWidgetOrder;
+  saveWidgetOrder();
+  closeModal('widget-modal');
+  renderDashboard();
+  toast('✅ Layout saved');
+}
+
+function renderCatList(){
+  document.getElementById('custom-cat-list').innerHTML=customCats.length
+    ?customCats.map(c=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:36px;height:36px;border-radius:10px;background:${c.color}22;display:flex;align-items:center;justify-content:center;font-size:18px">${c.icon}</div>
+        <div style="flex:1;font-size:13px;font-weight:500">${c.name}</div>
+        <div class="txn-del" onclick="deleteCustomCat('${c.id}')">🗑️</div>
+      </div>`).join('')
+    :'<div style="color:var(--text3);font-size:13px;padding:8px 0">No custom categories yet.</div>';
+}
+
+async function saveCustomCat(){
+  const name=document.getElementById('cat-inp-name').value.trim();
+  const icon=document.getElementById('cat-inp-icon').value.trim()||'📌';
+  const color=document.getElementById('cat-inp-color').value||CAT_COLORS[0];
+  if(!name){toast('⚠️ Enter a category name');return;}
+  const id='custom_'+name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();
+  const{db,collection,addDoc,serverTimestamp}=window._fb;
+  syncBadge('saving');
+  try{
+    await addDoc(collection(db,'customCats'),{id,name,icon,color,createdAt:serverTimestamp()});
+    syncBadge('saved');toast('✅ Category added');
+    document.getElementById('cat-inp-name').value='';
+    document.getElementById('cat-inp-icon').value='';
+    catColorIdx++;
+    document.getElementById('cat-inp-color').value=CAT_COLORS[catColorIdx%CAT_COLORS.length];
+    renderCatList();
+  }catch(err){syncBadge('error');toast('❌ '+err.message);}
+}
+
+function deleteCustomCat(id){
+  confirm2('🗑️','Delete Category?','Transactions using this category will show as "Others".','Delete','#e74c3c',async()=>{
+    const{db,doc,deleteDoc}=window._fb;
+    syncBadge('saving');
+    try{await deleteDoc(doc(db,'customCats',id));syncBadge('saved');toast('🗑️ Category deleted');renderCatList();}
+    catch(err){syncBadge('error');toast('❌ '+err.message);}
+    closeModal('confirm-modal');
+  });
+}
+
 // ── Delete goal ──
 function deleteGoal(id){
   confirm2('🗑️','Delete Goal?','This savings goal will be permanently removed.','Delete','#e74c3c',async()=>{
@@ -1019,13 +1225,15 @@ async function saveRecurring(){
   const amount=parseFloat(document.getElementById('rec-inp-amount').value);
   const dueDay=parseInt(document.getElementById('rec-inp-day').value);
   const icon=document.getElementById('rec-inp-icon').value.trim()||'📅';
+  const category=document.getElementById('rec-inp-cat').value;
+  const method=document.getElementById('rec-inp-method').value;
   if(!name||!amount||!dueDay||dueDay<1||dueDay>31){toast('⚠️ Fill all fields correctly');return;}
   const{db,collection,addDoc,serverTimestamp}=window._fb;
   const COLORS=['#e91e63','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e74c3c'];
   const color=COLORS[Math.floor(Math.random()*COLORS.length)];
   syncBadge('saving');
   try{
-    await addDoc(collection(db,'recurring'),{name,amount,dueDay,icon,color,createdAt:serverTimestamp()});
+    await addDoc(collection(db,'recurring'),{name,amount,dueDay,category,method,icon,color,createdAt:serverTimestamp()});
     syncBadge('saved');closeModal('rec-modal');toast('✅ Recurring added');
     document.getElementById('rec-inp-name').value='';
     document.getElementById('rec-inp-amount').value='';
@@ -1059,46 +1267,120 @@ function clearAll(){
 // ══════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════
+// ── Widget HTML builders ──
+const WIDGET_META={
+  hero:      {label:'Balance Card',      icon:'💳'},
+  survival:  {label:'Daily Stats',       icon:'📊'},
+  predict:   {label:'AI Prediction',     icon:'🤖'},
+  budget:    {label:'Monthly Budget',    icon:'🎯'},
+  categories:{label:'Category Breakdown',icon:'🏷️'},
+  heatmap:   {label:'Expense Heatmap',   icon:'📅'},
+  recent:    {label:'Recent Transactions',icon:'🧾'},
+};
+
+function buildWidget(id,data){
+  const {now,te,ti,burn,dLeft,health,todayAmt,catSpend,dim}=data;
+  const p2=budgets.total>0?Math.min((te/budgets.total)*100,100):0;
+  switch(id){
+    case 'hero': return `
+      <div class="hero-card">
+        <div class="hero-label">Monthly Balance</div>
+        <div class="hero-amount"><span class="sym">₹</span>${fmt(ti-te)}</div>
+        <div class="hero-month">${now.toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hsl">Income</div><div class="hsv inc">₹${fmt(ti)}</div></div>
+          <div class="hero-stat"><div class="hsl">Spent</div><div class="hsv exp">₹${fmt(te)}</div></div>
+          <div class="hero-stat"><div class="hsl">Today</div><div class="hsv" style="color:var(--gold)">₹${fmt(todayAmt)}</div></div>
+        </div>
+      </div>`;
+    case 'survival': {
+      const dCls=dLeft>15?'ok':dLeft>7?'warn':'crit';
+      const hCls=health>=70?'ok':health>=40?'warn':'crit';
+      return `<div class="sur-row">
+        <div class="sur-card"><div class="sur-num ${dCls}">${dLeft}</div><div class="sur-lbl">Days Left</div></div>
+        <div class="sur-card"><div class="sur-num warn">₹${fmt(burn)}</div><div class="sur-lbl">Daily Burn</div></div>
+        <div class="sur-card"><div class="sur-num ${hCls}">${health}</div><div class="sur-lbl">Health Score</div></div>
+      </div>`;}
+    case 'predict': {
+      let ptxt='';
+      if(budgets.total>0){
+        const p=(te/budgets.total*100).toFixed(0),rem=Math.max(0,budgets.total-te),proj=burn*dim;
+        if(p>90) ptxt=`🚨 <strong>${p}%</strong> of budget used! Projected overspend: <strong>₹${fmt(Math.max(0,proj-budgets.total))}</strong>`;
+        else if(p>70) ptxt=`⚠️ <strong>${p}%</strong> used. Budget exhausted in ~<strong>${burn>0?Math.floor(rem/burn):'?'} days</strong>`;
+        else ptxt=`✨ On track! Daily avg: <strong>₹${fmt(burn)}</strong> · Month-end balance: <strong>₹${fmt(ti-proj)}</strong>`;
+      }else ptxt=`Tap ⚙️ to <strong>set a monthly budget</strong> and unlock AI predictions`;
+      return `<div class="predict"><div class="predict-ico">🤖</div><div class="predict-txt">${ptxt}</div></div>`;}
+    case 'budget': {
+      const fc=p2<60?'mf-low':p2<85?'mf-mid':'mf-high';
+      return `<div class="section">
+        <div class="section-title">Monthly Budget</div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:13px;color:var(--text2)">Total Spent</span>
+            <span style="font-size:13px;font-family:'DM Mono',monospace;font-weight:600">${p2.toFixed(0)}%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill ${fc}" style="width:${p2}%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px">
+            <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">₹${fmt(te)} spent</span>
+            <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">₹${fmt(Math.max(0,budgets.total-te))} left</span>
+          </div>
+        </div>
+      </div>`;}
+    case 'categories': {
+      const chips=Object.entries(catSpend).sort((a,b)=>b[1]-a[1]).map(([cid,a])=>{
+        const c=getCat(cid);
+        return`<div class="cat-chip"><div class="cc-i">${c.icon}</div><div class="cc-n">${c.name}</div><div class="cc-a">₹${fmt(a)}</div></div>`;
+      }).join('')||'<div style="color:var(--text3);font-size:13px;padding:8px 4px">No expenses this month</div>';
+      return `<div class="section"><div class="section-title">This Month by Category</div></div>
+        <div class="cat-scroll">${chips}</div><div style="height:14px"></div>`;}
+    case 'heatmap': {
+      const cells=[];
+      for(let i=34;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');cells.push({dk,amt:sum(txns.filter(t=>t.date.slice(0,10)===dk&&t.type==='expense')),today:i===0});}
+      const mx=Math.max(...cells.map(c=>c.amt),1);
+      const cellsHtml=cells.map(c=>{const lv=c.amt===0?0:c.amt<mx*.25?1:c.amt<mx*.5?2:c.amt<mx*.75?3:4;return`<div class="hm-cell h${lv}${c.today?' today':''}" title="${c.dk}: ₹${fmt(c.amt)}"></div>`;}).join('');
+      return `<div class="section">
+        <div class="section-title">Expense Heatmap — Last 5 Weeks</div>
+        <div class="card">
+          <div class="hm-days"><div class="hm-day">S</div><div class="hm-day">M</div><div class="hm-day">T</div><div class="hm-day">W</div><div class="hm-day">T</div><div class="hm-day">F</div><div class="hm-day">S</div></div>
+          <div class="hm-grid">${cellsHtml}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:10px;justify-content:flex-end">
+            <span style="font-size:10px;color:var(--text3)">Less</span>
+            <div style="width:10px;height:10px;border-radius:2px;background:var(--bg3)"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.25)"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.55)"></div>
+            <div style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,.9)"></div>
+            <span style="font-size:10px;color:var(--text3)">More</span>
+          </div>
+        </div>
+      </div>`;}
+    case 'recent': {
+      const items=txns.slice(0,8).map(t=>txnH(t)).join('')||
+        `<div class="empty"><div class="empty-ico">💸</div><div class="empty-title">No transactions yet</div><div class="empty-sub">Tap ＋ to add your first entry</div></div>`;
+      return `<div class="section">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="section-title" style="margin-bottom:0">Recent</div>
+          <span style="font-size:12px;color:var(--gold);cursor:pointer" onclick="switchScreen('transactions')">See all →</span>
+        </div>
+      </div>
+      <div style="padding:0 16px">${items}</div>`;}
+    default: return '';
+  }
+}
+
 function renderDashboard(){
   const now=new Date();
   document.getElementById('dash-date').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('hero-month').textContent=now.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
   const exp=monthExp(),inc=monthInc(),te=sum(exp),ti=sum(inc);
   const todayAmt=sum(txns.filter(t=>isToday(t.date)&&t.type==='expense'));
-  document.getElementById('hero-balance').textContent=fmt(ti-te);
-  document.getElementById('hero-inc').textContent='₹'+fmt(ti);
-  document.getElementById('hero-exp').textContent='₹'+fmt(te);
-  document.getElementById('hero-today').textContent='₹'+fmt(todayAmt);
-  const dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),dLeft=dim-now.getDate();
+  const dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const dLeft=dim-now.getDate();
   const daysElapsed=Math.max(1,now.getDate());
   const burn=te>0?Math.round(te/daysElapsed):0;
   const health=calcH(te,ti,budgets.total);
-  const sd=document.getElementById('sur-days');sd.textContent=dLeft;sd.className='sur-num '+(dLeft>15?'ok':dLeft>7?'warn':'crit');
-  document.getElementById('sur-burn').textContent='₹'+fmt(burn);
-  const sc=document.getElementById('sur-score');sc.textContent=health;sc.className='sur-num '+(health>=70?'ok':health>=40?'warn':'crit');
-  // AI
-  const pt=document.getElementById('predict-txt');
-  if(budgets.total>0){
-    const p=(te/budgets.total*100).toFixed(0),rem=Math.max(0,budgets.total-te),proj=burn*dim;
-    if(p>90)pt.innerHTML=`🚨 <strong>${p}%</strong> of budget used! Projected overspend: <strong>₹${fmt(Math.max(0,proj-budgets.total))}</strong>`;
-    else if(p>70)pt.innerHTML=`⚠️ <strong>${p}%</strong> used. Budget exhausted in ~<strong>${burn>0?Math.floor(rem/burn):'?'} days</strong>`;
-    else pt.innerHTML=`✨ On track! Daily avg: <strong>₹${fmt(burn)}</strong> · Projected month-end balance: <strong>₹${fmt(ti-proj)}</strong>`;
-  }else{pt.innerHTML=`Tap ⚙️ to <strong>set a monthly budget</strong> and unlock AI predictions`;}
-  // Budget meter
-  const p2=budgets.total>0?Math.min((te/budgets.total)*100,100):0;
-  const fill=document.getElementById('bud-fill');
-  fill.style.width=p2+'%';fill.className='meter-fill '+(p2<60?'mf-low':p2<85?'mf-mid':'mf-high');
-  document.getElementById('bud-pct').textContent=p2.toFixed(0)+'%';
-  document.getElementById('bud-spent').textContent='₹'+fmt(te)+' spent';
-  document.getElementById('bud-left').textContent='₹'+fmt(Math.max(0,budgets.total-te))+' left';
-  // Cat chips
-  const cs={};exp.forEach(t=>{cs[t.category]=(cs[t.category]||0)+t.amount;});
-  document.getElementById('cat-scroll').innerHTML=Object.entries(cs).sort((a,b)=>b[1]-a[1]).map(([id,a])=>{
-    const c=getCat(id);return`<div class="cat-chip"><div class="cc-i">${c.icon}</div><div class="cc-n">${c.name}</div><div class="cc-a">₹${fmt(a)}</div></div>`;
-  }).join('')||'<div style="color:var(--text3);font-size:13px;padding:8px 4px">No expenses this month</div>';
-  renderHeatmap();
-  document.getElementById('recent-list').innerHTML=txns.slice(0,8).map(t=>txnH(t)).join('')||
-    `<div class="empty"><div class="empty-ico">💸</div><div class="empty-title">No transactions yet</div><div class="empty-sub">Tap ＋ to add your first entry</div></div>`;
+  const catSpend={};exp.forEach(t=>{catSpend[t.category]=(catSpend[t.category]||0)+t.amount;});
+  const data={now,te,ti,burn,dLeft,health,todayAmt,catSpend,dim};
+  // Render widgets in saved order
+  document.getElementById('dash-widgets').innerHTML=widgetOrder.map(id=>buildWidget(id,data)).join('');
 }
 function calcH(e,i,b){if(i===0)return 50;let s=50+((i-e)/i)*30;if(b>0)s-=((e/b)-.5)*20;if(i>0&&(i-e)/i>=.2)s+=10;if(i>0&&(i-e)/i>=.3)s+=10;return Math.max(0,Math.min(100,Math.round(s)))}
 function renderHeatmap(){
@@ -1160,7 +1442,27 @@ function renderBudget(){
   }).filter(Boolean).join('');
   document.getElementById('goals-list').innerHTML=goals.map(g=>{const p=Math.min((g.saved/g.target)*100,100),d=Math.ceil((g.target-g.saved)/30);return`<div class="goal-card"><div class="goal-top"><div class="goal-ico">${g.icon}</div><div style="flex:1"><div class="goal-name">${g.name}</div><div class="goal-target">Target: ₹${fmt(g.target)}</div></div><div class="txn-del" onclick="deleteGoal('${g.id}')">🗑️</div></div><div class="goal-pr"><span class="goal-saved">₹${fmt(g.saved)} saved</span><span class="goal-eta">₹${fmt(d)}/day needed</span></div><div class="meter-track"><div class="meter-fill" style="width:${p}%;background:var(--green)"></div></div><div style="text-align:right;font-size:10px;color:var(--text3);margin-top:4px">${p.toFixed(0)}% complete</div></div>`;}).join('')||`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No goals yet. Tap ＋ Add above.</div>`;
   const today=new Date();
-  document.getElementById('rec-list').innerHTML=recurring.length?recurring.map(r=>{const due=new Date(today.getFullYear(),today.getMonth(),r.dueDay);if(due<today)due.setMonth(due.getMonth()+1);const du=Math.ceil((due-today)/864e5);return`<div class="rec-item"><div class="rec-icon" style="background:${r.color}22">${r.icon}</div><div class="rec-info"><div class="rec-name">${r.name} <span class="due-b ${du<=5?'soon':'ok'}">Due in ${du}d</span></div><div class="rec-due">Every month on ${r.dueDay}th</div></div><div class="rec-amt">₹${fmt(r.amount)}</div><div class="txn-del" onclick="deleteRecurring('${r.id}')">🗑️</div></div>`;}).join(''):`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No recurring items. Tap ＋ Add above.</div>`;
+  const thisMonthKey=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0');
+  document.getElementById('rec-list').innerHTML=recurring.length?recurring.map(r=>{
+    const due=new Date(today.getFullYear(),today.getMonth(),r.dueDay);
+    if(due<today)due.setMonth(due.getMonth()+1);
+    const du=Math.ceil((due-today)/864e5);
+    const alreadyAdded=r.lastAdded===thisMonthKey;
+    const c=getCat(r.category||'bills');
+    return`<div class="rec-item">
+      <div class="rec-icon" style="background:${r.color||c.color}22">${r.icon||c.icon}</div>
+      <div class="rec-info">
+        <div class="rec-name">${r.name}
+          ${alreadyAdded
+            ?`<span class="due-b ok">✓ Added</span>`
+            :`<span class="due-b ${du<=0?'soon':du<=5?'soon':'ok'}">${du<=0?'Due today':'Due in '+du+'d'}</span>`}
+        </div>
+        <div class="rec-due">${c.icon} ${c.name} · ${r.method||'Bank'} · ${r.dueDay}th every month</div>
+      </div>
+      <div class="rec-amt">₹${fmt(r.amount)}</div>
+      <div class="txn-del" onclick="deleteRecurring('${r.id}')">🗑️</div>
+    </div>`;
+  }).join(''):`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No recurring items. Tap ＋ Add above.</div>`;
 }
 
 // ══════════════════════════════════════════

@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
 
 <script type="module">
@@ -38,7 +37,7 @@ const firebaseConfig = {
   // ╔══════════════════════════════════════════════════════╗
   // ║  STEP 2 — YOUR GMAIL (only this account can log in) ║
   // ╚══════════════════════════════════════════════════════╝
-  const ALLOWED_EMAIL = "vivekdn2504@gmail.com";
+  const ALLOWED_EMAIL = "your.email@gmail.com";
 
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -352,14 +351,14 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
 </head>
 <body>
 
-<!-- LOADING (only shown briefly for returning sessions where auth is cached) -->
-<div id="loading-screen" class="gone">
+<!-- LOADING -->
+<div id="loading-screen">
   <div class="spinner"></div>
   <div class="loading-text">Loading Paisa...</div>
 </div>
 
-<!-- LOGIN (shown by default — no waiting) -->
-<div id="login-screen">
+<!-- LOGIN -->
+<div id="login-screen" class="gone">
   <div class="login-glow"></div>
   <div class="login-logo">💰</div>
   <div class="login-appname">Pai<span>sa</span></div>
@@ -557,7 +556,6 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
       <div class="section-title">Export</div>
       <div class="settings-group">
         <div class="si" onclick="exportExcel()"><div class="si-ico">📊</div><div class="si-text"><div class="si-lbl">Export Excel (.xlsx)</div><div class="si-sub">All transactions spreadsheet</div></div><div class="si-arr">›</div></div>
-        <div class="si" onclick="exportPDF()"><div class="si-ico">📄</div><div class="si-text"><div class="si-lbl">Export PDF Report</div><div class="si-sub">Monthly summary</div></div><div class="si-arr">›</div></div>
         <div class="si" onclick="exportCSV()"><div class="si-ico">📁</div><div class="si-text"><div class="si-lbl">Export CSV</div><div class="si-sub">Raw data file</div></div><div class="si-arr">›</div></div>
       </div>
       <div class="section-title">Danger Zone</div>
@@ -665,7 +663,6 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
     <div class="modal-header"><div class="modal-title">Export Data</div><div class="modal-close" onclick="closeModal('export-modal')">✕</div></div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:12px">
       <button class="save-btn" style="background:var(--green)" onclick="exportExcel();closeModal('export-modal')">📊 Export Excel (.xlsx)</button>
-      <button class="save-btn" style="background:var(--blue)" onclick="exportPDF();closeModal('export-modal')">📄 Export PDF Report</button>
       <button class="save-btn" style="background:var(--bg3);color:var(--text)" onclick="exportCSV();closeModal('export-modal')">📁 Export CSV</button>
     </div>
   </div>
@@ -679,7 +676,7 @@ body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;min-he
     <div class="modal-body">
       <div class="form-field"><label class="form-label">Name</label><input type="text" class="form-input" id="rec-inp-name" placeholder="e.g. Netflix, Rent, SIP"></div>
       <div class="form-field"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="rec-inp-amount" placeholder="649"></div>
-      <div class="form-field"><label class="form-label">Due Day of Month</label><input type="number" class="form-input" id="rec-inp-day" placeholder="1–31" min="1" max="31"></div>
+      <div class="form-field"><label class="form-label">Due Day of Month (1–31)</label><input type="number" class="form-input" id="rec-inp-day" placeholder="15" min="1" max="31"></div>
       <div class="form-field"><label class="form-label">Icon (emoji)</label><input type="text" class="form-input" id="rec-inp-icon" placeholder="🎬" maxlength="4"></div>
       <button class="save-btn" onclick="saveRecurring()">Add Recurring Item</button>
     </div>
@@ -749,21 +746,11 @@ function syncBadge(s){
 window.addEventListener('firebase-ready',()=>{
   const {auth,onAuthStateChanged,ALLOWED_EMAIL}=window._fb;
 
-  // For returning users: briefly show spinner while Firebase resolves cached session
-  // This is near-instant (~100ms) from IndexedDB, not a network call
-  if(auth.currentUser===null){
-    // No cached user → show login immediately, no spinner needed
-    document.getElementById('login-screen').classList.remove('gone');
-  } else {
-    // Cached session exists → show spinner briefly while we verify
-    document.getElementById('loading-screen').classList.remove('gone');
-    document.getElementById('login-screen').classList.add('gone');
-  }
-
   onAuthStateChanged(auth,user=>{
     document.getElementById('loading-screen').classList.add('gone');
 
     if(!user){
+      // Not logged in → show login
       document.getElementById('login-screen').classList.remove('gone');
       document.getElementById('main-app').classList.remove('on');
       document.getElementById('denied-screen').classList.remove('show');
@@ -792,6 +779,7 @@ window.addEventListener('firebase-ready',()=>{
 });
 
 function signInGoogle(){
+  if(!window._fb){const btn=document.getElementById('google-btn');btn.textContent='Initialising…';setTimeout(signInGoogle,300);return;}
   const {auth,GoogleAuthProvider,signInWithPopup}=window._fb;
   const btn=document.getElementById('google-btn');
   btn.disabled=true;btn.textContent='Signing in…';
@@ -1025,7 +1013,7 @@ function deleteGoal(id){
   });
 }
 
-// ── Add recurring ──
+// ── Add / Delete recurring ──
 async function saveRecurring(){
   const name=document.getElementById('rec-inp-name').value.trim();
   const amount=parseFloat(document.getElementById('rec-inp-amount').value);
@@ -1039,12 +1027,14 @@ async function saveRecurring(){
   try{
     await addDoc(collection(db,'recurring'),{name,amount,dueDay,icon,color,createdAt:serverTimestamp()});
     syncBadge('saved');closeModal('rec-modal');toast('✅ Recurring added');
-    document.getElementById('rec-inp-name').value='';document.getElementById('rec-inp-amount').value='';document.getElementById('rec-inp-day').value='';document.getElementById('rec-inp-icon').value='';
+    document.getElementById('rec-inp-name').value='';
+    document.getElementById('rec-inp-amount').value='';
+    document.getElementById('rec-inp-day').value='';
+    document.getElementById('rec-inp-icon').value='';
   }catch(err){syncBadge('error');toast('❌ '+err.message);}
 }
-
 function deleteRecurring(id){
-  confirm2('🗑️','Delete Recurring Item?','This recurring entry will be removed permanently.','Delete','#e74c3c',async()=>{
+  confirm2('🗑️','Delete Recurring Item?','This entry will be removed permanently.','Delete','#e74c3c',async()=>{
     const{db,doc,deleteDoc}=window._fb;
     syncBadge('saving');
     try{await deleteDoc(doc(db,'recurring',id));syncBadge('saved');toast('🗑️ Deleted');}
@@ -1080,7 +1070,8 @@ function renderDashboard(){
   document.getElementById('hero-exp').textContent='₹'+fmt(te);
   document.getElementById('hero-today').textContent='₹'+fmt(todayAmt);
   const dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),dLeft=dim-now.getDate();
-  const burn=now.getDate()>0?Math.round(te/now.getDate()):0;
+  const daysElapsed=Math.max(1,now.getDate());
+  const burn=te>0?Math.round(te/daysElapsed):0;
   const health=calcH(te,ti,budgets.total);
   const sd=document.getElementById('sur-days');sd.textContent=dLeft;sd.className='sur-num '+(dLeft>15?'ok':dLeft>7?'warn':'crit');
   document.getElementById('sur-burn').textContent='₹'+fmt(burn);
@@ -1169,7 +1160,7 @@ function renderBudget(){
   }).filter(Boolean).join('');
   document.getElementById('goals-list').innerHTML=goals.map(g=>{const p=Math.min((g.saved/g.target)*100,100),d=Math.ceil((g.target-g.saved)/30);return`<div class="goal-card"><div class="goal-top"><div class="goal-ico">${g.icon}</div><div style="flex:1"><div class="goal-name">${g.name}</div><div class="goal-target">Target: ₹${fmt(g.target)}</div></div><div class="txn-del" onclick="deleteGoal('${g.id}')">🗑️</div></div><div class="goal-pr"><span class="goal-saved">₹${fmt(g.saved)} saved</span><span class="goal-eta">₹${fmt(d)}/day needed</span></div><div class="meter-track"><div class="meter-fill" style="width:${p}%;background:var(--green)"></div></div><div style="text-align:right;font-size:10px;color:var(--text3);margin-top:4px">${p.toFixed(0)}% complete</div></div>`;}).join('')||`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No goals yet. Tap ＋ Add above.</div>`;
   const today=new Date();
-  document.getElementById('rec-list').innerHTML=recurring.length?recurring.map(r=>{const due=new Date(today.getFullYear(),today.getMonth(),r.dueDay);if(due<today)due.setMonth(due.getMonth()+1);const du=Math.ceil((due-today)/864e5);return`<div class="rec-item"><div class="rec-icon" style="background:${r.color}22">${r.icon}</div><div class="rec-info"><div class="rec-name">${r.name} <span class="due-b ${du<=5?'soon':'ok'}">Due in ${du}d</span></div><div class="rec-due">Every month on ${r.dueDay}th</div></div><div class="rec-amt">₹${fmt(r.amount)}</div><div class="txn-del" onclick="deleteRecurring('${r.id}')">🗑️</div></div>`;}).join(''):`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No recurring items yet. Tap ＋ Add above.</div>`;
+  document.getElementById('rec-list').innerHTML=recurring.length?recurring.map(r=>{const due=new Date(today.getFullYear(),today.getMonth(),r.dueDay);if(due<today)due.setMonth(due.getMonth()+1);const du=Math.ceil((due-today)/864e5);return`<div class="rec-item"><div class="rec-icon" style="background:${r.color}22">${r.icon}</div><div class="rec-info"><div class="rec-name">${r.name} <span class="due-b ${du<=5?'soon':'ok'}">Due in ${du}d</span></div><div class="rec-due">Every month on ${r.dueDay}th</div></div><div class="rec-amt">₹${fmt(r.amount)}</div><div class="txn-del" onclick="deleteRecurring('${r.id}')">🗑️</div></div>`;}).join(''):`<div style="padding:0 16px 8px;color:var(--text3);font-size:13px">No recurring items. Tap ＋ Add above.</div>`;
 }
 
 // ══════════════════════════════════════════
@@ -1179,7 +1170,7 @@ function renderAnalytics(){
   Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};
   const exp=monthExp(),inc=monthInc(),te=sum(exp),ti=sum(inc);
   const sr=ti>0?(((ti-te)/ti)*100).toFixed(0):0;
-  const now=new Date(),burn=now.getDate()>0?Math.round(te/now.getDate()):0;
+  const now=new Date(),daysElapsed2=Math.max(1,now.getDate()),burn=te>0?Math.round(te/daysElapsed2):0;
   document.getElementById('stats-grid').innerHTML=[{l:'Month Expenses',v:'₹'+fmt(te),c:'var(--red)'},{l:'Month Income',v:'₹'+fmt(ti),c:'var(--green)'},{l:'Savings Rate',v:sr+'%',c:sr>=20?'var(--green)':'var(--gold)'},{l:'Daily Burn',v:'₹'+fmt(burn),c:'var(--gold)'}].map(s=>`<div class="stat-mini"><div class="stat-mini-lbl">${s.l}</div><div class="stat-mini-val" style="color:${s.c}">${s.v}</div></div>`).join('');
   document.getElementById('daily-sub').textContent=`₹${fmt(te)} total · ${exp.length} transactions`;
   const dl=[],dd=[];
@@ -1209,16 +1200,6 @@ function renderAnalytics(){
 // ══════════════════════════════════════════
 function exportCSV(){const rows=[['Date','Type','Category','Note','Amount','Method'],...txns.map(t=>[fmtDate(t.date),t.type,getCat(t.category).name,t.note,t.amount,t.method])];const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n')],{type:'text/csv'}));a.download='paisa_transactions.csv';a.click();toast('📁 CSV exported');}
 function exportExcel(){try{const d=[['Date','Type','Category','Note','Amount','Method'],...txns.map(t=>[fmtDate(t.date),t.type,getCat(t.category).name,t.note,t.amount,t.method])];const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(d);ws['!cols']=[{wch:16},{wch:10},{wch:14},{wch:30},{wch:12},{wch:12}];XLSX.utils.book_append_sheet(wb,ws,'Transactions');XLSX.writeFile(wb,'paisa_transactions.xlsx');toast('📊 Excel exported');}catch(e){toast('❌ Export failed');}}
-function exportPDF(){
-  try{
-    const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
-    const now=new Date(),te=sum(monthExp()),ti=sum(monthInc());
-    doc.setFillColor(10,10,15);doc.rect(0,0,210,297,'F');
-    doc.setTextColor(245,166,35);doc.setFontSize(24);doc.setFont('helvetica','bold');doc.text('PAISA',20,25);
-    doc.setTextColor(200,200,220);doc.setFontSize(12);doc.text('Monthly Report — '+now.toLocaleDateString('en-IN',{month:'long',year:'numeric'}),20,35);
-    [[15,'INCOME',ti,[46,204,113]],[80,'EXPENSES',te,[231,76,60]],[145,'SAVINGS',ti-te,ti-te>=0?[46,204,113]:[231,76,60]]].forEach(([x,l,v,c])=>{doc.setFillColor(26,26,38);doc.roundedRect(x,45,55,25,3,3,'F');doc.setTextColor(100,100,140);doc.setFontSize(8);doc.text(l,x+5,52);doc.setFontSize(13);doc.setTextColor(...c);doc.text('Rs.'+fmt(v),x+5,62);});
-    doc.setTextColor(245,166,35);doc.setFontSize(10);doc.text('TRANSACTIONS',20,82);
-    doc.setFillColor(30,30,46);doc.rect(15,84,180,8,'F');
-    doc.setTextColor(200,200,220);doc.setFontSize(8);['Date','Type','Category','Note','Amount','Method'].forEach((h,i)=>doc.text(h,[20,45,63,90,145,170][i],89));
-    let y=96;
-    txns.slice(0,40).forEach((t,idx)=>{if(idx%2===0){doc.setFillColor(22,22,34);doc.rect(15,y-4,180,7,'F');}doc.setTextColor(180,180,200);doc.setFont('helvetica','normal');doc.text(fmtDate(t.date).slice(0,10),20,y);doc.text(t.type,45,y);doc.text(getCat(t.category).name.slice(0,12),63,y);doc.text(t.note.slice(0,20),90,y);doc.setTextColor(...(t.type==='expense'?[231,76,60]:[46,204,113]));doc.text((t.type==='expense'?'-':'+')+' Rs.'+fmt(t.amount),145,y);doc.setTextColor(180,180,200);
+</script>
+</body>
+</html>
